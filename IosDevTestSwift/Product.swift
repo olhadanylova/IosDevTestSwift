@@ -8,10 +8,12 @@
 
 import UIKit
 
-class Product: NSObject {    
-    var productName:NSString!
-    var imageURL:NSString!
-    var descripion:NSString!
-    var image:UIImage!
-    var price : Float!
+class Product: NSObject {
+    
+    var productName:String?
+    var imageURL:String?
+    var productDescription:String?
+    var image:UIImage?
+    var price : Float?
+    
 }
