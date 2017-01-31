@@ -15,14 +15,15 @@ class ProductsViewController: UITableViewController {
     let VERSION_NUM = "v1"
     
     let PAGESIZE = 10;
-    let backendless = Backendless.sharedInstance()!
-    let query = BackendlessDataQuery()
-    var offset = 0
     
-    var loadedProducts: NSMutableArray!
-    var totalDataCount: CLong!
+    private let backendless = Backendless.sharedInstance()!
+    private let query = BackendlessDataQuery()
+    private var offset = 0
     
-    var detailViewController: ProductDetailsViewController?
+    private var loadedProducts: NSMutableArray!
+    private var totalDataCount: CLong!
+    
+    private var detailViewController: ProductDetailsViewController?
     @IBOutlet var buttonLoadMore: UIBarButtonItem!
     
     
@@ -155,7 +156,7 @@ class ProductsViewController: UITableViewController {
     
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell: CustomCell! = tableView.dequeueReusableCell(withIdentifier: "ProductCell") as? CustomCell
+        let cell: CustomCell! = tableView.dequeueReusableCell(withIdentifier: "ProductCell") as! CustomCell
         let product = loadedProducts[indexPath.row] as! Product
         
         // If product image hasn't been loaded yet it's image sets to "noimage.png".
