@@ -17,12 +17,12 @@ class ProductsViewController: UITableViewController {
     let PAGESIZE = 10;
     let backendless = Backendless.sharedInstance()!
     let query = BackendlessDataQuery()
-    
     var offset = 0
+    
     var loadedProducts: NSMutableArray!
     var totalDataCount: CLong!
     
-    var detailViewController: ProductDetailsViewController? = nil
+    var detailViewController: ProductDetailsViewController?
     @IBOutlet var buttonLoadMore: UIBarButtonItem!
     
     
@@ -50,11 +50,16 @@ class ProductsViewController: UITableViewController {
     
     // MARK: - Paging
     
+    /**
+     Implements async getting first page.
+     
+     This method is called right after view did load.
+     */
     func getFirstPageAsync() {
-        query.queryOptions.pageSize = PAGESIZE as NSNumber!
+        query.queryOptions.pageSize = PAGESIZE as NSNumber!;
         backendless.persistenceService.of(Product.ofClass()).find(
             query,
-            response: { (products: BackendlessCollection?) -> (Void) in
+            response: { (products: BackendlessCollection?) -> () in
                 self.getPageAsync(products: products!)
         },
             error: { (fault: Fault?) -> () in
@@ -64,13 +69,16 @@ class ProductsViewController: UITableViewController {
     }
     
     
+    /**
+     Implements async getting every next page after the first page.
+     */
     func getNextPageAsync() {
         self.offset += PAGESIZE
         
         backendless.persistenceService.of(Product.ofClass()).find(query).getPage(
             self.offset,
             pageSize: Int(PAGESIZE),
-            response: { (products: BackendlessCollection?) -> (Void) in
+            response: { (products: BackendlessCollection?) -> () in
                 self.getPageAsync(products: products!)
         },
             error: { (fault: Fault?) -> (Void) in
@@ -80,9 +88,12 @@ class ProductsViewController: UITableViewController {
     }
     
     
+    /**
+     Implements getting page from BackendlessCollection.
+     
+     @param products BackendlessCollection class that represents object collections returned by the find methods.
+     */
     func getPageAsync(products: BackendlessCollection) {
-        //print("Loaded \(products.data.count) products in the current page")
-        
         for product in products.getCurrentPage() {
             loadedProducts.add(product);
         }
@@ -96,7 +107,7 @@ class ProductsViewController: UITableViewController {
             self.tableView.scrollToRow(at: indexPath, at: .top, animated: false)
         }
         
-        // Make "Load More" buton disabled if all data is loaded.
+        // Make "Load More" button disabled if all data is loaded.
         if (loadedProducts.count == totalDataCount) {
             self.buttonLoadMore.isEnabled = false
             self.buttonLoadMore.title = "All data loaded";
@@ -108,27 +119,25 @@ class ProductsViewController: UITableViewController {
     }
     
     
+    /**
+     Implements async getting product image from product image URL.
+     */
     func loadImagesAsync() {
         for i in 0 ..< loadedProducts.count {
             let product = loadedProducts[i] as! Product
-            if (product.image == nil && product.imageURL != nil) {
-                
-                
+            if (product.image == nil && product.imageURL != "") {
                 let url = URL(string: product.imageURL!)
-                
                 DispatchQueue.global().async {
-                    let data = try? Data(contentsOf: url!)
+                    let imgData = try? Data(contentsOf: url!)
                     DispatchQueue.main.async {
-                        product.image = UIImage(data: data!)
+                        product.image = UIImage(data: imgData!)
                         
                         // Reload product cell to show image.
                         let indexPath = IndexPath(row: i, section: (0))
                         self.tableView.reloadRows(at: [indexPath], with: .none)
                     }
                 }
-                
             }
-            
         }
     }
     
@@ -139,68 +148,29 @@ class ProductsViewController: UITableViewController {
         return 1
     }
     
+    
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return loadedProducts.count
     }
     
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
-        
         let cell: CustomCell! = tableView.dequeueReusableCell(withIdentifier: "ProductCell") as? CustomCell
-        
         let product = loadedProducts[indexPath.row] as! Product
         
         // If product image hasn't been loaded yet it's image sets to "noimage.png".
         if (product.image == nil) {
             cell.imgView.image = UIImage(named:"noimage.png")
         }
-            // If product image has already been loaded.
+        // If product image has already been loaded.
         else {
             cell.imgView.image = product.image
         }
         
         cell.productNameLabel.text = product.productName
         cell.productDescriptionLabel.text = product.productDescription
-        
         return cell
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     
     
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
@@ -208,12 +178,17 @@ class ProductsViewController: UITableViewController {
     }
     
     
-    // MARK: - Navigation
+    // MARK: - Segues
     
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
+        if segue.identifier == "showDetail" {
+            if let indexPath = self.tableView.indexPathForSelectedRow {
+                let product = loadedProducts[indexPath.row] as! Product
+                let productDetailsVC = (segue.destination as! UINavigationController).topViewController as! ProductDetailsViewController
+                productDetailsVC.product = product
+            }
+        }
     }
     
     

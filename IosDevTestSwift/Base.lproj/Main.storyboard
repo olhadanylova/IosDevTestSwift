@@ -85,10 +85,10 @@
                     <toolbarItems/>
                     <navigationItem key="navigationItem" title="Detail" id="mOI-FS-AaM"/>
                     <connections>
-                        <outlet property="descriptionTextView" destination="3ID-vQ-epR" id="WJD-43-Hdh"/>
-                        <outlet property="imgView" destination="aNg-gS-RBP" id="zOd-hR-yYS"/>
-                        <outlet property="priceLabel" destination="g3j-uK-1Yy" id="cQC-kH-2xI"/>
-                        <outlet property="productNameLabel" destination="CTn-Or-m4m" id="Swi-To-oPY"/>
+                        <outlet property="imgView" destination="aNg-gS-RBP" id="DoI-R4-yhe"/>
+                        <outlet property="priceLabel" destination="g3j-uK-1Yy" id="O2j-fY-u4H"/>
+                        <outlet property="productDescriptionTextView" destination="3ID-vQ-epR" id="FUn-eG-Ukc"/>
+                        <outlet property="productNameLabel" destination="CTn-Or-m4m" id="9k9-bz-qRQ"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="FJe-Yq-33r" sceneMemberID="firstResponder"/>

@@ -10,33 +10,53 @@ import UIKit
 
 class ProductDetailsViewController: UIViewController {
     
-    @IBOutlet weak var detailDescriptionLabel: UILabel!
+    @IBOutlet var imgView: UIImageView!
+    @IBOutlet var productNameLabel: UILabel!
+    @IBOutlet var priceLabel: UILabel!
+    @IBOutlet var productDescriptionTextView: UITextView!
     
-    func configureView() {
-        // Update the user interface for the detail item.
-        if let product = self.product {
-            if let label = self.detailDescriptionLabel {
-                label.text = product.description
-            }
-        }
-    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
         self.configureView()
-    }
-    
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
     
     var product: Product? {
         didSet {
-            // Update the view.
             self.configureView()
         }
     }
     
+    
+    /**
+     Configures product details view with product's data.
+     */
+    func configureView() {
+        if let product = self.product {
+            self.title = "\(product.productName!)\(" Details")"
+            
+            if let imgView = self.imgView {
+                // If product image hasn't been loaded yet it's image sets to "noimage.png".
+                if (product.image == nil) {
+                    imgView.image = UIImage(named:"noimage.png")
+                }
+                    // If product image has already been loaded.
+                else {
+                    imgView.image = product.image
+                }
+            }
+            
+            if let productNameLabel = self.productNameLabel {
+                productNameLabel.text = product.productName
+            }
+            
+            if let priceLabel = self.priceLabel {
+                priceLabel.text = String(format: "%.2f", product.price)
+            }
+            
+            if let productDescriptionTextView = self.productDescriptionTextView {
+                productDescriptionTextView.text = product.productDescription
+            }
+        }
+    }
 }

@@ -10,10 +10,10 @@ import UIKit
 
 class Product: NSObject {
     
-    var productName:String?
-    var imageURL:String?
-    var productDescription:String?
-    var image:UIImage?
-    var price : Float?
+    var productName: String?
+    var imageURL: String?
+    var productDescription: String?
+    var image: UIImage?
+    var price:Float = 0.0
     
 }
